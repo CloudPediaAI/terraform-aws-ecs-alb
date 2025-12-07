@@ -107,3 +107,9 @@ variable "health_check_endpoint" {
   type = string
   default = "/health"
 }
+
+variable "alb_allowed_cidr_blocks" {
+  description = "List of CIDR blocks allowed to access the ALB"
+  type        = list(string)
+  default     = ["0.0.0.0/0"]
+}

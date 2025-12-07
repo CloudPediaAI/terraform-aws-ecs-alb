@@ -25,7 +25,7 @@ resource "aws_security_group" "containerized_app_alb" {
     from_port   = local.containerized_app_alb_port
     to_port     = local.containerized_app_alb_port
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = var.alb_allowed_cidr_blocks
   }
 
   # ingress {

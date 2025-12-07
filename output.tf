@@ -38,8 +38,15 @@ output "alb_dns_name" {
   description = "ALB DNS name for direct access"
 }
 
-# # Output ALB Zone ID
-# output "alb_zone_id" {
-#   value       = aws_lb.containerized_app.zone_id
-#   description = "ALB hosted zone ID"
-# }
+# Output ALB Security Group ID
+output "alb_security_group_id" {
+  value       = aws_security_group.containerized_app_alb.id
+  description = "Security group ID for the Application Load Balancer"
+}
+
+# Output ECS Tasks Security Group ID
+output "ecs_tasks_security_group_id" {
+  value       = aws_security_group.containerized_app_ecs_tasks.id
+  description = "Security group ID for the ECS tasks"
+}
+
