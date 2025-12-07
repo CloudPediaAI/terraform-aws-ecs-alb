@@ -23,7 +23,7 @@ resource "aws_ecr_lifecycle_policy" "containerized_app" {
         tagStatus     = "tagged"
         tagPrefixList = ["v"]
         countType     = "imageCountMoreThan"
-        countNumber   = 10
+        countNumber   = var.ecr_image_retention_count
       }
       action = {
         type = "expire"

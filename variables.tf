@@ -51,4 +51,59 @@ variable "need_logging" {
 variable "container_env_vars" {
   description = "Environment variables to configure in container"
   type        = list(map(string))
+  default     = []
+}
+
+variable "ecr_image_retention_count" {
+  description = "Number of images to retain in ECR repository lifecycle policy"
+  type        = number
+  default     = 10
+}
+
+variable "cloudwatch_log_retention_days" {
+  description = "Number of days to retain CloudWatch logs for ECS tasks"
+  type        = number
+  default     = 7
+}
+
+variable "ecs_desired_count" {
+  description = "Number of tasks to run in the ECS service"
+  type        = number
+  default     = 1
+}
+
+variable "ecs_deployment_maximum_percent" {
+  description = "Maximum percentage of tasks that can be running during a deployment"
+  type        = number
+  default     = 200
+}
+
+variable "ecs_deployment_minimum_healthy_percent" {
+  description = "Minimum percentage of healthy tasks that must remain running during a deployment"
+  type        = number
+  default     = 50
+}
+
+variable "ecs_force_new_deployment" {
+  description = "Whether to force a new deployment when the service is updated"
+  type        = bool
+  default     = false
+}
+
+variable "ecs_wait_for_steady_state" {
+  description = "Whether to wait for the ECS service to reach a steady state during deployment"
+  type        = bool
+  default     = false
+}
+
+variable "need_alerts" {
+  description = "Secrets to configure in container"
+  type        = list(map(string))
+  default     = []
+}
+
+variable "health_check_endpoint" {
+  description = "Endpoint for health check"
+  type = string
+  default = "/health"
 }

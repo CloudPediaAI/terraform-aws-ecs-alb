@@ -14,7 +14,7 @@ resource "aws_ecs_cluster" "containerized_app" {
 # CloudWatch Log Group for ECS
 resource "aws_cloudwatch_log_group" "containerized_app" {
   name              = local.ecs_log_group_name
-  retention_in_days = 7
+  retention_in_days = var.cloudwatch_log_retention_days
 
   tags = var.tags
 }
@@ -45,7 +45,7 @@ resource "aws_iam_role_policy_attachment" "containerized_app_ecs_task_execution"
 
 # ECS Task Role (for containers to access other AWS services)
 resource "aws_iam_role" "containerized_app_ecs_task_role" {
-  name     = local.ecs_role_task
+  name     = local.ecs_task_role_name
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -63,7 +63,7 @@ resource "aws_iam_role" "containerized_app_ecs_task_role" {
 
 # Task role policy for basic container operations
 resource "aws_iam_role_policy" "containerized_app_ecs_task_role_policy" {
-  name     = "${local.ecs_name_prefix}-task-role-policy"
+  name     = local.ecs_task_policy_name
   role     = aws_iam_role.containerized_app_ecs_task_role.id
 
   policy = jsonencode({
@@ -105,7 +105,7 @@ resource "aws_iam_role_policy" "containerized_app_ecs_task_role_policy" {
 
 # Additional policy for ECR access
 resource "aws_iam_role_policy" "containerized_app_ecs_task_execution_ecr" {
-  name     = "${local.ecs_name_prefix}-task-execution-policy"
+  name     = local.ecs_task_execution_policy_name
   role     = aws_iam_role.containerized_app_ecs_task_execution.id
 
   policy = jsonencode({
@@ -125,7 +125,7 @@ resource "aws_iam_role_policy" "containerized_app_ecs_task_execution_ecr" {
 
 # ECS Task Definition
 resource "aws_ecs_task_definition" "containerized_app" {
-  family                   = local.ecs_name_prefix
+  family                   = local.ecs_task_family_name
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   cpu                      = "512"
@@ -134,7 +134,7 @@ resource "aws_ecs_task_definition" "containerized_app" {
   task_role_arn            = aws_iam_role.containerized_app_ecs_task_role.arn
 
   container_definitions = jsonencode([{
-    name      = "${local.ecs_name_prefix}-container-1"
+    name      = local.ecs_container_name
     image     = "${aws_ecr_repository.containerized_app.repository_url}:latest"
     essential = true
 
@@ -156,7 +156,7 @@ resource "aws_ecs_task_definition" "containerized_app" {
     }
 
     healthCheck = {
-      command     = ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:${var.app_port}/admin/state || exit 1"]
+      command     = ["CMD-SHELL", "wget --no-verbose --tries=1 --spider ${local.health_check_path} || exit 1"]
       interval    = 30
       timeout     = 10
       retries     = 5
@@ -191,21 +191,21 @@ resource "aws_ecs_service" "containerized_app" {
   name            = local.ecs_service_name
   cluster         = aws_ecs_cluster.containerized_app.id
   task_definition = aws_ecs_task_definition.containerized_app.arn
-  desired_count   = (terraform.workspace == "dev") ? 1 : 2
+  desired_count   = var.ecs_desired_count
   launch_type     = "FARGATE"
 
   # Enable service connect for better service discovery (optional)
   enable_execute_command = true
 
   # Deployment configuration for rolling updates
-  deployment_maximum_percent         = 200
-  deployment_minimum_healthy_percent = 50
+  deployment_maximum_percent         = var.ecs_deployment_maximum_percent
+  deployment_minimum_healthy_percent = var.ecs_deployment_minimum_healthy_percent
 
   # Force new deployment when task definition changes
-  force_new_deployment = false
+  force_new_deployment = var.ecs_force_new_deployment
 
   # Wait for steady state during deployment
-  wait_for_steady_state = false
+  wait_for_steady_state = var.ecs_wait_for_steady_state
 
   network_configuration {
     subnets          = data.aws_subnets.default.ids
@@ -215,19 +215,11 @@ resource "aws_ecs_service" "containerized_app" {
 
   load_balancer {
     target_group_arn = aws_lb_target_group.containerized_app.arn
-    container_name   = "${local.ecs_name_prefix}-container-1"
+    container_name   = local.ecs_container_name
     container_port   = var.app_port
   }
 
   depends_on = [aws_lb_listener.containerized_app_http, aws_iam_role.containerized_app_ecs_task_execution, aws_iam_role.containerized_app_ecs_task_role]
-
-  # lifecycle {
-  #   ignore_changes = [
-  #     task_definition,
-  #     desired_count,
-  #     platform_version
-  #   ]
-  # }
 
   tags = var.tags
 }
