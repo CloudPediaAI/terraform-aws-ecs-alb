@@ -50,3 +50,8 @@ output "ecs_tasks_security_group_id" {
   description = "Security group ID for the ECS tasks"
 }
 
+# Output ALB Endpoint (with HTTP/HTTPS based on configuration)
+output "alb_endpoint" {
+  value       = local.alb_endpoint
+  description = "ALB endpoint (with HTTP/HTTPS based on configuration)"
+}

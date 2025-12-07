@@ -22,8 +22,8 @@ resource "aws_security_group" "containerized_app_alb" {
 
   ingress {
     description = "Allow HTTP from CloudFront"
-    from_port   = local.containerized_app_alb_port
-    to_port     = local.containerized_app_alb_port
+    from_port   = local.app_alb_port
+    to_port     = local.app_alb_port
     protocol    = "tcp"
     cidr_blocks = var.alb_allowed_cidr_blocks
   }
@@ -92,7 +92,7 @@ resource "aws_lb_listener" "containerized_app_http" {
   count = local.need_ssl ? 0 : 1
 
   load_balancer_arn = aws_lb.containerized_app.arn
-  port              = local.containerized_app_alb_port
+  port              = local.app_alb_port
   protocol          = "HTTP"
 
   default_action {

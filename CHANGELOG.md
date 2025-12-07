@@ -82,3 +82,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.1.1] - 2025-12-07
 - Added Output variables for security group ids 
 - Introduced allowed CIDR blocks variable
+
+## [1.1.2] - 2025-12-07
+- added ALB endpoint output
+- refactor ALB port variable usage

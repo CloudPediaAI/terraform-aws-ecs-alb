@@ -18,3 +18,6 @@ Refer [ChangeLog](CHANGELOG.md#110---2025-12-07)
 
 ## Version 1.1.1 
 Refer [ChangeLog](CHANGELOG.md#111---2025-12-07)
+
+## Version 1.1.2 
+Refer [ChangeLog](CHANGELOG.md#112---2025-12-07)
