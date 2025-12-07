@@ -12,45 +12,34 @@ resource "aws_acm_certificate" "alb_cert" {
   tags = var.tags
 }
 
-# Certificate validation for ALB
-resource "aws_acm_certificate_validation" "alb_cert" {
-  depends_on = [aws_acm_certificate.alb_cert]
-
-  count = local.need_ssl ? 1 : 0
-
-  provider                = aws.us-east-1
-  certificate_arn         = aws_acm_certificate.alb_cert[0].arn
-  validation_record_fqdns = [for record in aws_route53_record.alb_cert_validation : record.fqdn]
-}
-
-locals {
-  # Encode then Decode Validation options to avoid conditional for_each
-  domain_validations_str = jsonencode((local.need_ssl) ? aws_acm_certificate.alb_cert[0].domain_validation_options : [
-    {
-      domain_name           = "dummy"
-      resource_record_name  = "dummy"
-      resource_record_type  = "CNAME"
-      resource_record_value = "dummy"
-    },
-  ])
-  domain_validations = jsondecode(local.domain_validations_str)
-  # use first item for validations
-  domain_validation = local.domain_validations[0]
-}
-
-
 # Route53 records for ALB certificate validation
 resource "aws_route53_record" "alb_cert_validation" {
-  depends_on = [aws_acm_certificate.alb_cert]
+  for_each = local.need_ssl ? {
+    for dvo in aws_acm_certificate.alb_cert[0].domain_validation_options : dvo.domain_name => {
+      name   = dvo.resource_record_name
+      record = dvo.resource_record_value
+      type   = dvo.resource_record_type
+    }
+  } : {}
 
-  count = (local.need_ssl) ? 1 : 0
-
-  zone_id         = var.hosted_zone_id
-  ttl             = 60
   allow_overwrite = true
-  name            = local.domain_validation.resource_record_name
-  records         = [local.domain_validation.resource_record_value]
-  type            = local.domain_validation.resource_record_type
+  name            = each.value.name
+  records         = [each.value.record]
+  ttl             = 60
+  type            = each.value.type
+  zone_id         = var.hosted_zone_id
+}
+
+# Certificate validation for ALB
+resource "aws_acm_certificate_validation" "alb_cert" {
+  count = local.need_ssl ? 1 : 0
+
+  certificate_arn         = aws_acm_certificate.alb_cert[0].arn
+  validation_record_fqdns = [for record in aws_route53_record.alb_cert_validation : record.fqdn]
+
+  timeouts {
+    create = "5m"
+  }
 }
 
 # Route53 A record for vendor website ALB
