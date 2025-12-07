@@ -43,6 +43,6 @@ locals {
   ecs_cloudwatch_alarm_alb_resp_time_high    = "${local.ecs_alb_name}-response-time-high"
   ecs_cloudwatch_alarm_alb_unhealthy_targets = "${local.ecs_alb_name}-unhealthy-targets"
 
-  containerized_app_alb_port          = 80
+  containerized_app_alb_port          = local.need_ssl ? 443 : 80
   containerized_app_alb_http_endpoint = "http://${aws_lb.containerized_app.dns_name}:${local.containerized_app_alb_port}"
 }

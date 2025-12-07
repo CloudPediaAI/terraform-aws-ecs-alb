@@ -14,11 +14,13 @@ resource "aws_acm_certificate" "alb_cert" {
 
 # Certificate validation for ALB
 resource "aws_acm_certificate_validation" "alb_cert" {
+  depends_on = [aws_acm_certificate.alb_cert]
+
   count = local.need_ssl ? 1 : 0
 
   provider                = aws.us-east-1
   certificate_arn         = aws_acm_certificate.alb_cert[0].arn
-  validation_record_fqdns = [for record in aws_route53_record.alb_cert : record.fqdn]
+  validation_record_fqdns = [for record in aws_route53_record.alb_cert_validation : record.fqdn]
 }
 
 locals {
@@ -38,7 +40,7 @@ locals {
 
 
 # Route53 records for ALB certificate validation
-resource "aws_route53_record" "alb_cert" {
+resource "aws_route53_record" "alb_cert_validation" {
   depends_on = [aws_acm_certificate.alb_cert]
 
   count = (local.need_ssl) ? 1 : 0
