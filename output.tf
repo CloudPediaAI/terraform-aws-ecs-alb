@@ -1,5 +1,5 @@
 output "vpc_id" {
-  value = local.vpc_id
+  value       = local.vpc_id
   description = "The VPC where all resources got created"
 }
 
@@ -22,10 +22,15 @@ output "ecs_cluster_name" {
 }
 
 output "ecs_task_family_name" {
-  value=local.ecs_task_family_name
+  value       = local.ecs_task_family_name
   description = "Task definition family name"
 }
 
+# Output ECS Container Name
+output "ecs_container_name" {
+  value       = local.ecs_container_name
+  description = "ECS container name"
+}
 
 # Output ALB DNS Name for direct access (useful for testing)
 output "alb_dns_name" {
