@@ -10,5 +10,8 @@ This terraform module will create ECS container and Application load balancer
 
 # Release Notes
 
+## Version 1.0.0 
+Refer [ChangeLog](CHANGELOG.md#100---2025-12-06)
+
 ## Version 1.1.0 
-Refer [ChangeLog](CHANGELOG.md#110---2025-12-06)
+Refer [ChangeLog](CHANGELOG.md#110---2025-12-20)
