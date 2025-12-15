@@ -9,6 +9,11 @@ output "ecr_repository_uri" {
   description = "ECR repository URI"
 }
 
+output "ecr_repository_arn" {
+  value       = aws_ecr_repository.containerized_app.arn
+  description = "ECR repository ARN"
+}
+
 # Output ECS Service Name
 output "ecs_service_name" {
   value       = aws_ecs_service.containerized_app.name
@@ -24,6 +29,16 @@ output "ecs_cluster_name" {
 output "ecs_task_family_name" {
   value       = local.ecs_task_family_name
   description = "Task definition family name"
+}
+
+output "ecs_task_execution_role_arn" {
+  value       = aws_iam_role.containerized_app_ecs_task_execution.arn
+  description = "ECS task execution role ARN"
+}
+
+output "ecs_task_role_arn" {
+  value       = aws_iam_role.containerized_app_ecs_task_role.arn
+  description = "ECS task role ARN"
 }
 
 # Output ECS Container Name
