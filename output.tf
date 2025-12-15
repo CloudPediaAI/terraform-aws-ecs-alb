@@ -70,3 +70,8 @@ output "alb_endpoint" {
   value       = local.alb_endpoint
   description = "ALB endpoint (with HTTP/HTTPS based on configuration)"
 }
+
+output "log_group_arn" {
+  value       = aws_cloudwatch_log_group.containerized_app.arn
+  description = "CloudWatch Log Group ARN for ECS"
+}
