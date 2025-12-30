@@ -29,7 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **Container Configuration**
   - Configurable container environment variables
-  - Health check endpoint configuration (`/admin/state`)
+  - Health check endpoint configuration (`/`)
   - CloudWatch Logs integration with 7-day retention
   - Fargate deployment with 512 CPU / 1024 MB memory allocation
 

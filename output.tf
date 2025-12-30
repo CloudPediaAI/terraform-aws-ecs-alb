@@ -36,6 +36,11 @@ output "ecs_task_execution_role_arn" {
   description = "ECS task execution role ARN"
 }
 
+output "ecs_task_role_name" {
+  value       = aws_iam_role.containerized_app_ecs_task_role.id
+  description = "ECS task role name"
+}
+
 output "ecs_task_role_arn" {
   value       = aws_iam_role.containerized_app_ecs_task_role.arn
   description = "ECS task role ARN"

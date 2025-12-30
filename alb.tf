@@ -75,7 +75,7 @@ resource "aws_lb_target_group" "containerized_app" {
     healthy_threshold   = 2
     interval            = 10
     matcher             = "200"
-    path                = "/admin/state" # Consider implementing a dedicated health endpoint
+    path                = var.health_check_endpoint
     port                = "traffic-port"
     protocol            = "HTTP"
     timeout             = 5
