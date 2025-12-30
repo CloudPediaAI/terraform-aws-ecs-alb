@@ -87,7 +87,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - added ALB endpoint output
 - refactor ALB port variable usage
 
-## [1.1.3] - 2025-12-29
+## [1.1.5] - 2025-12-29
 
 ### Fixed
 - Resolved intermittent health check failures during deployment
