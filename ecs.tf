@@ -77,28 +77,6 @@ resource "aws_iam_role_policy" "containerized_app_ecs_task_role_policy" {
         ]
         Resource = "${aws_cloudwatch_log_group.containerized_app.arn}:*"
       }
-    #   ,
-    #   {
-    #     Effect = "Allow"
-    #     Action = [
-    #       "rds:DescribeDBInstances",
-    #       "rds:DescribeDBClusters",
-    #       "rds-db:connect"
-    #     ]
-    #     Resource = [
-    #       "arn:aws:rds-db:${var.aws_region}:${data.aws_caller_identity.current.account_id}:dbuser:${aws_db_instance.primary_db.resource_id}/*"
-    #     ]
-    #   },
-    #   {
-    #     Effect = "Allow"
-    #     Action = [
-    #       "secretsmanager:GetSecretValue",
-    #       "secretsmanager:DescribeSecret"
-    #     ]
-    #     Resource = [
-    #       "arn:aws:secretsmanager:${var.aws_region}:${data.aws_caller_identity.current.account_id}:secret:${var.app_name_prefix}/*"
-    #     ]
-    #   }
     ]
   })
 }
@@ -128,8 +106,8 @@ resource "aws_ecs_task_definition" "containerized_app" {
   family                   = local.ecs_task_family_name
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  cpu                      = "512"
-  memory                   = "1024"
+  cpu                      = var.ecs_cpu
+  memory                   = var.ecs_memory
   execution_role_arn       = aws_iam_role.containerized_app_ecs_task_execution.arn
   task_role_arn            = aws_iam_role.containerized_app_ecs_task_role.arn
 

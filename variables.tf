@@ -104,12 +104,24 @@ variable "need_alerts" {
 
 variable "health_check_endpoint" {
   description = "Endpoint for health check"
-  type = string
-  default = "/health"
+  type        = string
+  default     = "/health"
 }
 
 variable "alb_allowed_cidr_blocks" {
   description = "List of CIDR blocks allowed to access the ALB"
   type        = list(string)
   default     = ["0.0.0.0/0"]
+}
+
+variable "ecs_cpu" {
+  type        = number
+  description = "The number of CPU units to allocate for the ECS task"
+  default     = 512
+}
+
+variable "ecs_memory" {
+  type        = number
+  description = "The amount of memory (in MiB) to allocate for the ECS task"
+  default     = 1024
 }
